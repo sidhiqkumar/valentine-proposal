@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message for Nandhitha</title>
+    <style>
+        :root {
+            --text-color: #333333;
+            --accent-color: #ff4d6d;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fdf2f4;
+            transition: background 1.5s ease, color 1.5s ease;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        .card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            max-width: 420px;
+            z-index: 10;
+            border: 2px solid #ffccd5;
+            transition: all 1s ease;
+        }
+
+        .reveal-active {
+            background-color: #ff85a2 !important;
+            --text-color: #ffffff;
+        }
+
+        h1, h2, p {
+            color: var(--text-color);
+            transition: color 1s ease;
+        }
+
+        .love-text {
+            font-size: 2.8rem;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+            animation: bounce 0.8s infinite alternate;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            height: 70px;
+            align-items: center;
+        }
+
+        button {
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        #yesBtn { background-color: var(--accent-color); color: white; position: relative; }
+        #noBtn { background-color: #95a5a6; color: white; }
+        
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+        
+        .heart {
+            position: absolute;
+            color: #ff4d6d;
+            font-size: 20px;
+            pointer-events: none;
+            animation: float 3s linear forwards;
+        }
+
+        @keyframes float {
+            to { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body id="body">
+
+    <div class="card" id="mainCard">
+        <div id="content">
+            <h1 id="mainTitle">Do you still love me? 🥺</h1>
+            <div class="buttons">
+                <button id="yesBtn" onmouseover="runAway()">YES</button>
+                <button id="noBtn" onclick="triggerPrank()">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function runAway() {
+            const btn = document.getElementById('yesBtn');
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            btn.style.position = 'fixed';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            document.getElementById('noBtn').style.backgroundColor = "#2ecc71";
+        }
+
+        function triggerPrank() {
+            const content = document.getElementById('content');
+            
+            // The "Safe" Message - Now showing for 6 seconds
+            content.innerHTML = `
+                <h1 style="color: #2ecc71;">Oh my god, I am safe! Phew! 😅💨</h1>
+                <p>I thought you were going to say something else...</p>
+            `;
+
+            // Timeout changed to 6000ms (6 seconds)
+            setTimeout(() => {
+                document.getElementById('body').classList.add('reveal-active');
+                document.getElementById('mainCard').style.background = "transparent";
+                document.getElementById('mainCard').style.boxShadow = "none";
+                document.getElementById('mainCard').style.border = "none";
+                
+                createHearts();
+
+                content.innerHTML = `
+                    <h1 class="love-text">Just fun! ❤️</h1>
+                    <h2 style="font-size: 2rem;">I love you Nandhitha!</h2>
+                    <p style="font-size: 1.2rem; opacity: 0.9;">You're stuck with me forever. 💍</p>
+                    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHV0amZ0Z3p4bmZ0Z3p4bmZ0Z3p4bmZ0Z3p4bmZ0Z3p4JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/K9W723Yis6rJg7oK5t/giphy.gif" width="180" style="margin-top:20px;">
+                `;
+            }, 6000); // <-- This is the 6-second timer
+        }
+
+        function createHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '100vh';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 3000);
+            }, 300);
+        }
+    </script>
+</body>
+</html>
