@@ -65,9 +65,15 @@
             cursor: pointer;
             font-weight: bold;
             transition: transform 0.2s, background 0.3s;
+            touch-action: manipulation; /* Improves touch response */
         }
 
-        #yesBtn { background-color: var(--accent-color); color: white; z-index: 100; }
+        #yesBtn { 
+            background-color: var(--accent-color); 
+            color: white; 
+            z-index: 100;
+            position: relative; /* Base position */
+        }
         #noBtn { background-color: #95a5a6; color: white; }
         
         .quiz-option { 
@@ -117,7 +123,10 @@
         <div id="content">
             <h1 id="mainTitle">Do you still love me? 🥺</h1>
             <div class="buttons">
-                <button id="yesBtn" onmouseover="runAway()" onclick="runAway()">YES</button>
+                <button id="yesBtn" 
+                        onmouseover="runAway(event)" 
+                        onclick="runAway(event)" 
+                        ontouchstart="runAway(event)">YES</button>
                 <button id="noBtn" onclick="triggerPrank()">NO</button>
             </div>
         </div>
@@ -140,14 +149,21 @@
             { q: "Sidhiq loves u?", a: "always", options: ["no", "maybe", "not at all", "always"] }
         ];
 
-        function runAway() {
+        function runAway(e) {
+            if (e) e.preventDefault(); // Stop the click from actually happening
             const btn = document.getElementById('yesBtn');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            
+            // Calculate random position within the screen safe area
+            const padding = 20;
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth - padding);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight - padding);
+            
             btn.style.position = 'fixed';
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
+            
             document.getElementById('noBtn').style.backgroundColor = "#2ecc71";
+            return false;
         }
 
         function triggerPrank() {
