@@ -34,6 +34,8 @@
             z-index: 10;
             border: 2px solid #ffccd5;
             transition: all 1s ease;
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
         .reveal-active {
@@ -49,23 +51,36 @@
         .buttons {
             display: flex;
             justify-content: center;
-            gap: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
             min-height: 70px;
             align-items: center;
         }
 
         button {
-            padding: 12px 35px;
-            font-size: 1.1rem;
+            padding: 12px 30px;
+            font-size: 1rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background 0.3s;
         }
 
         #yesBtn { background-color: var(--accent-color); color: white; z-index: 100; }
         #noBtn { background-color: #95a5a6; color: white; }
+        
+        .quiz-option { 
+            background-color: white; 
+            color: var(--accent-color); 
+            border: 2px solid var(--accent-color);
+            width: 100%;
+            margin: 8px 0;
+        }
+        .quiz-option:hover { background-color: #fff0f3; transform: scale(1.02); }
+        
+        .start-btn { background-color: #ffffff; color: #ff4d6d; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .gift-btn { background-color: #ff4d6d; color: white; margin-top: 20px; font-size: 1.3rem; }
 
         .love-text {
             font-size: 2.5rem;
@@ -89,11 +104,10 @@
             to { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
         }
 
-        .love-gif {
-            margin-top: 20px;
-            border-radius: 15px;
-            width: 180px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        .fallback-emoji {
+            font-size: 80px;
+            display: block;
+            margin: 20px auto;
         }
     </style>
 </head>
@@ -110,6 +124,22 @@
     </div>
 
     <script>
+        let score = 0;
+        let currentQuestion = 0;
+
+        const quizData = [
+            { q: "Our first meet?", a: "feb 26", options: ["feb 24", "feb 26", "feb 28", "mar 01"] },
+            { q: "Our first mall date?", a: "brooks field, Coimbatore", options: ["prozone mall", "brooks field, Coimbatore", "fun mall", "marina mall"] },
+            { q: "Our first bike ride on?", a: "april 3", options: ["april 1", "april 3", "april 5", "mar 30"] },
+            { q: "Our first outstation?", a: "chennai", options: ["ooty", "chennai", "madurai", "mysore"] },
+            { q: "My favourite dish?", a: "Dosa", options: ["Idli", "Dosa", "Biryani", "Parotta"] },
+            { q: "Our first insta story on?", a: "mar 11", options: ["mar 09", "mar 10", "mar 11", "mar 12"] },
+            { q: "Our favorite spot all time?", a: "hotel", options: ["park", "hotel", "beach", "cafe"] },
+            { q: "My favourite color?", a: "pink", options: ["red", "pink", "rose", "purple"] },
+            { q: "First gift?", a: "dress", options: ["watch", "dress", "ring", "flower"] },
+            { q: "Sidhiq loves u?", a: "always", options: ["no", "maybe", "not at all", "always"] }
+        ];
+
         function runAway() {
             const btn = document.getElementById('yesBtn');
             const x = Math.random() * (window.innerWidth - btn.offsetWidth);
@@ -122,7 +152,6 @@
 
         function triggerPrank() {
             const content = document.getElementById('content');
-            
             content.innerHTML = `
                 <h1 style="color: #2ecc71;">Oh my god, I am safe! Phew! 😅💨</h1>
                 <p>I thought you were going to say something else...</p>
@@ -139,12 +168,69 @@
 
                 content.innerHTML = `
                     <h1 class="love-text">Just fun! ❤️</h1>
-                    <h2 style="font-size: 2rem;">I love you Nandhitha!</h2>
+                    <h2 style="font-size: 2.2rem;">I love you mami!</h2>
                     <p style="font-size: 1.2rem; opacity: 0.9;">You're stuck with me forever. 💍</p>
-                    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp6NjB4Z3Zsc2V3eHh6eHh6eHh6eHh6eHh6eHh6eHh6eHh6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/v6aOjy0Qo1fIA/giphy.gif" 
-                         alt="Love hearts" class="love-gif">
+                    <span class="fallback-emoji">💑</span>
+                    <button class="start-btn" onclick="startQuiz()">Start the Quiz ✍️</button>
                 `;
-            }, 6000);
+            }, 6000); 
+        }
+
+        function startQuiz() {
+            const card = document.getElementById('mainCard');
+            card.style.background = "rgba(255, 255, 255, 0.95)";
+            card.style.border = "2px solid #ffccd5";
+            card.style.boxShadow = "0 15px 35px rgba(0,0,0,0.1)";
+            document.getElementById('body').classList.remove('reveal-active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const content = document.getElementById('content');
+            if (currentQuestion < quizData.length) {
+                const data = quizData[currentQuestion];
+                let optionsHtml = data.options.map(opt => 
+                    `<button class="quiz-option" onclick="checkAnswer('${opt}')">${opt}</button>`
+                ).join('');
+
+                content.innerHTML = `
+                    <p style="color: #ff4d6d; font-weight: bold;">Question ${currentQuestion + 1} of 10</p>
+                    <h2 style="margin-bottom: 20px;">${data.q}</h2>
+                    <div style="display: flex; flex-direction: column;">
+                        ${optionsHtml}
+                    </div>
+                `;
+            } else {
+                showResult();
+            }
+        }
+
+        function checkAnswer(answer) {
+            if (answer === quizData[currentQuestion].a) {
+                score++;
+            }
+            currentQuestion++;
+            showQuestion();
+        }
+
+        function showResult() {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <h1 style="color: #ff4d6d;">Quiz Result 🏆</h1>
+                <p style="font-size: 1.5rem;">You got ${score} / 10 correct!</p>
+                <p>${score === 10 ? "Perfect score for my perfect girl! 🥰" : "I still love you regardless! ❤️"}</p>
+                <button class="gift-btn" onclick="showGift()">Click for Gift 🎁</button>
+            `;
+        }
+
+        function showGift() {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <h1 class="love-text">Surprise! 🎁</h1>
+                <h2 style="color: #ff4d6d; font-size: 1.8rem; margin: 20px 0;">Your gift is in your left side.</h2>
+                <p style="font-style: italic;">Look over there! ❤️</p>
+                <span class="fallback-emoji">🎉</span>
+            `;
         }
 
         function createHearts() {
